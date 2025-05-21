@@ -1,115 +1,115 @@
 <!DOCTYPE html>
-<html>
-	<head>
-		<meta charset="UTF-8"/>
-		<title>Site do JV</title>
-		
-		<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@400;700&display=swap" rel="stylesheet">
-		<style type="text/css" title="MeuEstilo" media="all">
-		
-		* {
-			font-family: 'Ubuntu', sans-serif;
-		}
-		
-		body {
-			background-color: #7fa788; 			
-			text-align: center;			
-			margin: 25px;
-		 }
-		 
-		 .container {
-			background-color: #c9c9c9; 	
-			padding: 15px;
-			text-align: center;			
-		 }
-		 
-		 h1 {
-			color: #2E2E2E;
-		 }
-		 
-		 h2 {
-			color: #2E2E2E
-			font-size: 14px;
-		 }
-		 
-		 .about h1 {
-		  font-size: 16px;
-		 }
-		 
-		 .about p {
-			color: #A5A5A5;
-			font-weight: 400;
-		 }
-		 
-		 .about {
-			padding: 30px;
-			margin: 30px;
-			background-color: #fff; 
-			border-radius: 0%;
-			text-align: center;
-		 }
-		
-		img.avatar {
-			width:200px;
-			border-radius: 10%;
-			filter: grayscale(1);
-			transition: 0.5s;
-		}
-		
-		img.ico {
-			width:20px;			
-			filter: grayscale(1);
-			transition: 0.5s;
-			
-		}
-		
-		img:hover {				
-			filter: grayscale(0);
-			cursor: pointer;
-			border-radius: 50%;
-			box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2);
-		}
-		
-		.negrito {
-			font-weight: 700;
-		}
-		
-		</style>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Costureira</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; max-width: 800px; margin: auto; }
+    h1, h2 { color: #e91e63; }
+    input, button { padding: 8px; margin: 5px 0; width: 100%; box-sizing: border-box; }
+    .card { border: 1px solid #ccc; border-radius: 5px; padding: 15px; margin-bottom: 10px; background: #fff0f5; }
+    .flex { display: flex; justify-content: space-between; align-items: center; gap: 10px; flex-wrap: wrap; }
+    .checkboxes { display: flex; gap: 10px; }
+    .remove-btn { background: red; color: white; border: none; padding: 5px 10px; cursor: pointer; }
+  </style>
+</head>
+<body>
+  <h1>Controle de Clientes e Estoque</h1>
 
-	</head>
-		
-	<body>		
-	<div class="container">
-		<h1> Perfil </h1>
-		<p>Sou joão vitor aluno de Programação</p>
-			<img class="avatar" src="Captura de tela 2024-02-19 180025.png" alt="Avatar">	
-		
-		<div class="about"> 
-			<h1>Sobre mim</h1>
-			<p>sou um aluno de análise e desenvolvimento de sistemas, 
-				também estudos diversas linguagens de programação como SQL,JAVASCRIPT,C#,PYTHON</p>
-		</div>
-		
-		<div>
-			<h2>Detalhes</h2>
-			
-			<span class="negrito">Nome:</span> <p>João Vitor Santos de Souza</p>
-			<span class="negrito">Idade:</span> <p>19 anos</p>
-			<span class="negrito">Localização:</span> <p>São João de Meriti - RJ</p>
-			
-			
-		
-			
-		</div>
-		
-		
+  <h2>Adicionar Cliente</h2>
+  <input id="cliente" placeholder="Nome">
+  <input id="contato" placeholder="Contato">
+  <input id="pedido" placeholder="Pedido">
+  <button onclick="adicionarCliente()">Salvar Cliente</button>
 
-	</div>
-	
-	
-	<!--Experimente por um filtro para deixar a imagem preto
- 	e branca filter: grayscale(1); -->
-	</body>
+  <h2>Lista de Clientes</h2>
+  <div id="lista-clientes"></div>
+
+  <h2>Estoque de Materiais</h2>
+  <input id="material" placeholder="Nome do material">
+  <input id="quantidade" type="number" placeholder="Quantidade">
+  <button onclick="adicionarMaterial()">Adicionar Material</button>
+  <div id="lista-estoque"></div>
+
+  <script>
+    let clientes = JSON.parse(localStorage.getItem('clientes') || '[]');
+    let estoque = JSON.parse(localStorage.getItem('estoque') || '[]');
+
+    function salvarDados() {
+      localStorage.setItem('clientes', JSON.stringify(clientes));
+      localStorage.setItem('estoque', JSON.stringify(estoque));
+    }
+
+    function adicionarCliente() {
+      const nome = document.getElementById('cliente').value;
+      const contato = document.getElementById('contato').value;
+      const pedido = document.getElementById('pedido').value;
+      if (!nome || !contato || !pedido) return;
+      clientes.push({ id: Date.now(), nome, contato, pedido, realizado: false, entregue: false });
+      document.getElementById('cliente').value = '';
+      document.getElementById('contato').value = '';
+      document.getElementById('pedido').value = '';
+      salvarDados();
+      renderClientes();
+    }
+
+    function toggleStatus(id, campo) {
+      clientes = clientes.map(c => c.id === id ? { ...c, [campo]: !c[campo] } : c);
+      salvarDados();
+      renderClientes();
+    }
+
+    function renderClientes() {
+      const lista = document.getElementById('lista-clientes');
+      lista.innerHTML = '';
+      clientes.forEach(c => {
+        const div = document.createElement('div');
+        div.className = 'card';
+        div.innerHTML = `
+          <p><strong>Nome:</strong> ${c.nome}</p>
+          <p><strong>Contato:</strong> ${c.contato}</p>
+          <p><strong>Pedido:</strong> ${c.pedido}</p>
+          <div class="checkboxes">
+            <label><input type="checkbox" ${c.realizado ? 'checked' : ''} onchange="toggleStatus(${c.id}, 'realizado')"> Realizado</label>
+            <label><input type="checkbox" ${c.entregue ? 'checked' : ''} onchange="toggleStatus(${c.id}, 'entregue')"> Entregue</label>
+          </div>`;
+        lista.appendChild(div);
+      });
+    }
+
+    function adicionarMaterial() {
+      const nome = document.getElementById('material').value;
+      const quantidade = parseInt(document.getElementById('quantidade').value);
+      if (!nome || isNaN(quantidade)) return;
+      estoque.push({ id: Date.now(), nome, quantidade });
+      document.getElementById('material').value = '';
+      document.getElementById('quantidade').value = '';
+      salvarDados();
+      renderEstoque();
+    }
+
+    function removerMaterial(id) {
+      estoque = estoque.filter(m => m.id !== id);
+      salvarDados();
+      renderEstoque();
+    }
+
+    function renderEstoque() {
+      const lista = document.getElementById('lista-estoque');
+      lista.innerHTML = '';
+      estoque.forEach(m => {
+        const div = document.createElement('div');
+        div.className = 'card flex';
+        div.innerHTML = `
+          <span>${m.nome} - <strong>${m.quantidade}</strong></span>
+          <button class="remove-btn" onclick="removerMaterial(${m.id})">Remover</button>`;
+        lista.appendChild(div);
+      });
+    }
+
+    renderClientes();
+    renderEstoque();
+  </script>
+</body>
 </html>
